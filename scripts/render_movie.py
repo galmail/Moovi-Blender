@@ -37,8 +37,7 @@ def render_movies(movies,render_path):
         if strip_type == 'SOUND':
             last_frame = strip.frame_final_end
     sce.frame_end = strip.frame_final_end
-    print('scene frame_end: '+str(sce.frame_end))
-
+    print('scene __frame_end='+str(sce.frame_end)+'__')
 
     for scene in bpy.data.scenes:
     	scene.render.image_settings.file_format = 'H264'
@@ -48,7 +47,7 @@ def render_movies(movies,render_path):
     	scene.render.resolution_percentage = 50
 
     # render scene
-    render_scene(render_path)
+    #render_scene(render_path)
 
 def render_scene(render_path):
     render = bpy.data.scenes["Scene"].render

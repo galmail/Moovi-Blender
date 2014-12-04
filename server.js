@@ -1,50 +1,66 @@
 var express = require('express');
-var httpProxy = require('http-proxy');
-var request = require('request');
 var app = express();
 
-////////// STATIC FILES CONFIGURATION //////////
 
-// switch(app.get('env')) {
-//   case 'development':
-//     app.use(express.static(__dirname + '/www', {
-//       maxAge : 0
-//     }));
-//     break;
-//   case 'production':
-//     app.use(express.static(__dirname + '/www', {
-//       maxAge : 0
-//     }));
-//     app.use(express.compress());
-//     break;
-//   default:
-//     return;
-// }
 
-////////// PROXY SERVER CONFIGURATION //////////
+// eg. blender -b scripts/ready.blend --debug --background --python scripts/render_movie.py -- "/Users/gal/Desktop/gruvid/gruvidblender/input/video1.mp4" "/Users/gal/Desktop/gruvid/gruvidblender/input/video2.mp4" --render="/Users/gal/Desktop/gruvid/gruvidblender/output/"
+app.get('/render', function (req, res) {
+  console.log('VIDEOS: ' + req.query.videos);
+  console.log('OUTPUT: ' + req.query.output);
+  var success = true;
+  var msg = "";
 
-// app.all(/api\//, function(req, res, next){
-//   var url = 'http://gruvid.herokuapp.com' + req.url;
-//   reqpipe(req, url, res);
-// });
+  // invoke blender script
+  var sys = require('sys');
+  var exec = require('child_process').exec;
+  var blender = "/Users/gal/Desktop/gruvid/blenderTest/blender.app/Contents/MacOS/blender";
+  var cmd = blender + " -b scripts/ready.blend --debug --background --python scripts/render_movie.py -- " +
+    req.query.videos.join(' ') +
+    " --render=" +
+    req.query.output;
 
-// app.all(/users\//, function(req, res, next){
-//   var url = 'http://gruvid.herokuapp.com' + req.url;
-//   reqpipe(req, url, res);
-// });
+  console.log('CMD: ' + cmd);
 
-// function reqpipe(req, url, res) {
-//   var start = new Date();
-//   process.stdout.write('Calling: ' + url);
-//   req.pipe(request(url)).pipe(res); 
-//   console.log('  ' + (new Date()- start) + " ms");
-// }
+  exec(cmd, function(error, stdout, stderr){
+    if(error || stderr){
+      success = false;
+      msg = stderr;
+    }
+    else {
+      success = true;
+      msg = cmd;
+    }
+
+
+    var lastFrame = String(stdout.match(/__frame_end=\d+/g)).split('=').pop();
+
+    console.log('Last Frame is: ' + lastFrame);
+
+
+
+
+
+
+
+    //TODO report back to the server that the video is ready
+
+
+
+  });
+
+  res.json({ rendering: true });
+
+});
+
+
 
 ////////// STARTING SERVER //////////
 
-app.listen(process.env.PORT || 3000);
+var port = process.env.PORT || 3000;
 
-console.log("Node.js is running in " + app.get('env'));
+app.listen(port);
+
+console.log("Node.js is running in " + app.get('env') + " on port " + port);
 
 process.on('uncaughtException', function(err) {
   console.log('Caught exception: ' + err);
