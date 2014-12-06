@@ -39,13 +39,6 @@ def render_movies(movies,render_path):
     sce.frame_end = strip.frame_final_end
     print('scene __frame_end='+str(sce.frame_end)+'__')
 
-    for scene in bpy.data.scenes:
-    	scene.render.image_settings.file_format = 'H264'
-    	scene.render.ffmpeg.format = 'QUICKTIME'
-    	scene.render.ffmpeg.audio_codec = 'AAC'
-    	scene.render.ffmpeg.audio_bitrate = 128
-    	scene.render.resolution_percentage = 50
-
     # render scene
     #render_scene(render_path)
 
@@ -55,11 +48,12 @@ def render_scene(render_path):
     render.use_overwrite = True
     render.filepath = render_path
 
-
-
-
-
-
+    for scene in bpy.data.scenes:
+        scene.render.image_settings.file_format = 'H264'
+        scene.render.ffmpeg.format = 'QUICKTIME'
+        scene.render.ffmpeg.audio_codec = 'AAC'
+        scene.render.ffmpeg.audio_bitrate = 128
+        scene.render.resolution_percentage = 50
 
     bpy.ops.render.render(animation=True)
 
@@ -77,6 +71,23 @@ def get_props_context():
             prop_context = bpy.context.copy()
             prop_context['area'] = area
             return prop_context
+
+def retrieve_movies(movies):
+    my_movies = []
+    for movie in movies:
+        if "amazonaws.com" in movie:
+            bucket = movie.split('.')[0].split('/').pop()
+            video_path = movie.split('amazonaws.com').pop()
+            local_path = "tmp/" + video_path.split('/').pop()
+            return_code = subprocess.call("s3cmd get s3://" + bucket + video_path + " " + local_path, shell=True)
+            if return_code==0:
+                my_movies.append(local_path)
+            else:
+                print("Error getting the video from s3")
+        else:
+            my_movies.append(movie)
+    return my_movies
+
 
 def main():
     import sys       # to get command line args
@@ -117,7 +128,9 @@ def main():
         return
 
     # Run load movie function
-    render_movies(args.movies, args.render_path)
+    movies = retrieve_movies(args.movies)
+    print(movies)
+    #render_movies(movies, args.render_path)
 
     print("batch job finished, exiting")
 
