@@ -109,7 +109,8 @@ def save_video(rendered_video, s3_path):
 
 def cleanup_video_files(video_path):
     tmp_vid_folder = video_path[:-1]
-    print("Delete folder: " + tmp_vid_folder)
+    print("Deleting folder: " + tmp_vid_folder)
+    subprocess.call("rm -rf " + tmp_vid_folder, shell=True)
 
 def main():
     import sys       # to get command line args
