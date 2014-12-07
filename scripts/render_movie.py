@@ -40,6 +40,9 @@ def render_movies(movies,render_path):
     sce.frame_end = strip.frame_final_end
     print('scene __frame_end='+str(sce.frame_end)+'__')
 
+
+    return get_video_name(sce.frame_end)
+
     # render scene
     #render_scene(render_path)
 
@@ -92,6 +95,22 @@ def retrieve_movies(movies):
 def get_tmp_out_folder(render_path):
     return "/tmp/cache" + render_path.split('amazonaws.com').pop()
 
+def get_video_name(last_frame):
+    max_len_frames = 4
+    ext = ".mov"
+    frame = str(last_frame)
+    last_frame_scene = ("0" * (max_len_frames - len(frame))) + frame
+    return "0001-" + last_frame_scene + ext
+
+def save_video(rendered_video, s3_path):
+    bucket = s3_path.split('.')[0].split('/').pop()
+    video_path = s3_path.split('amazonaws.com').pop()
+    return_code = subprocess.call("s3cmd put --force " + rendered_video + " s3://" + bucket + video_path, shell=True)
+    return return_code==0
+
+def cleanup_video_files(video_path):
+    print("Delete folder: " + video_path)
+
 def main():
     import sys       # to get command line args
     import argparse  # to parse options for us and print a nice help message
@@ -133,7 +152,11 @@ def main():
     # Run load movie function
     movies = retrieve_movies(args.movies)
     output_folder = get_tmp_out_folder(args.render_path)
-    render_movies(movies, output_folder)
+    rendered_video = render_movies(movies, output_folder)
+    print("Output folder: " + output_folder)
+    print("Rendered Video: " + rendered_video)
+    save_video(output_folder + rendered_video, args.render_path)
+    cleanup_video_files(output_folder)
 
     print("batch job finished, exiting")
 
