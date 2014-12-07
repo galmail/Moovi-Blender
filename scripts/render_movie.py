@@ -155,7 +155,7 @@ def main():
     output_folder = get_tmp_out_folder(args.render_path)
     rendered_video = render_movies(movies, output_folder)
     print("Output folder: " + output_folder)
-    print("Rendered Video: " + rendered_video)
+    print("RenderedVideo=" + rendered_video)
     saved_ok = save_video(output_folder + rendered_video, args.render_path)
     if saved_ok:
         cleanup_video_files(output_folder)

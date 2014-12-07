@@ -32,20 +32,28 @@ app.get('/render', function (req, res) {
       msg = cmd;
     }
 
+    var video_name = String(stdout.match(/RenderedVideo=\s+/g)).split('=').pop();
+    console.log('Video Name: ' + video_name);
 
-    var lastFrame = String(stdout.match(/__frame_end=\d+/g)).split('=').pop();
+    var _out = req.query.output.split('/');
+    var video_id = _out[_out.length-2];
+    var url = req.query.output + video_name;
 
-    console.log('Last Frame is: ' + lastFrame);
+    var options = {
+      host: 'http://gruvid.herokuapp.com',
+      port: 80,
+      path: '/api/v1/video_is_ready?id='+ video_id + '&url=' + url,
+      method: 'POST'
+    };
 
-
-
-
-
-
-
-    //TODO report back to the server that the video is ready
-
-
+    http.request(options, function(res) {
+      console.log('STATUS: ' + res.statusCode);
+      console.log('HEADERS: ' + JSON.stringify(res.headers));
+      res.setEncoding('utf8');
+      // res.on('data', function (chunk) {
+      //   console.log('BODY: ' + chunk);
+      // });
+    }).end();
 
   });
 
