@@ -34,16 +34,17 @@ app.get('/render', function (req, res) {
     }
 
     var video_name = String(stdout.match(/RenderedVideo=\d+-\d+.mov/g)).split('=').pop();
-    console.log('Video Name: ' + video_name);
-
     var _out = req.query.output.split('/');
     var video_id = _out[_out.length-2];
-    var url = req.query.output + video_name;
+    var video_url = req.query.output + video_name;
+
+    console.log('Video Id: ' + video_id);
+    console.log('Video URL: ' + video_url);
 
     var options = {
       host: 'http://gruvid.herokuapp.com',
       port: 80,
-      path: '/api/v1/video_is_ready?id='+ video_id + '&url=' + url,
+      path: '/api/v1/video_is_ready?id='+ video_id + '&url=' + video_url,
       method: 'POST'
     };
 
