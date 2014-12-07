@@ -33,7 +33,7 @@ app.get('/render', function (req, res) {
       msg = cmd;
     }
 
-    var video_name = String(stdout.match(/RenderedVideo=\s+/g)).split('=').pop();
+    var video_name = String(stdout.match(/RenderedVideo=\d+-\d+.mov/g)).split('=').pop();
     console.log('Video Name: ' + video_name);
 
     var _out = req.query.output.split('/');
