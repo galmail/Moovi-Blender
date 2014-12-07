@@ -41,7 +41,7 @@ def render_movies(movies,render_path):
     print('scene __frame_end='+str(sce.frame_end)+'__')
 
     # render scene
-    #render_scene(render_path)
+    render_scene(render_path)
 
     return get_video_name(sce.frame_end)
 
