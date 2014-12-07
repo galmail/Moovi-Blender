@@ -36,7 +36,7 @@ app.get('/render', function (req, res) {
     var video_name = String(stdout.match(/RenderedVideo=\d+-\d+.mov/g)).split('=').pop();
     var _out = req.query.output.split('/');
     var video_id = _out[_out.length-2];
-    var video_url = req.query.output + video_name;
+    var video_url = req.query.output.replace(/"/g,'') + video_name;
 
     console.log('Video Id: ' + video_id);
     console.log('Video URL: ' + video_url);
