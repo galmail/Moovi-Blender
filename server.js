@@ -13,7 +13,8 @@ app.get('/render', function (req, res) {
   // invoke blender script
   var sys = require('sys');
   var exec = require('child_process').exec;
-  var blender = "/Users/gal/Desktop/gruvid/blenderTest/blender.app/Contents/MacOS/blender";
+  //var blender = "/Users/gal/Desktop/gruvid/blenderTest/blender.app/Contents/MacOS/blender";
+  var blender = "blender";
   var cmd = blender + " -b scripts/ready.blend --debug --background --python scripts/render_movie.py -- " +
     req.query.videos.join(' ') +
     " --render=" +
