@@ -56,7 +56,7 @@ app.get('/render', function (req, res) {
 
 ////////// STARTING SERVER //////////
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 80;
 
 app.listen(port);
 
