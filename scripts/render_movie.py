@@ -16,6 +16,7 @@
 # See blender --help for details.
 
 import bpy
+import subprocess
 
 def render_movies(movies,render_path):    
     # load movies
