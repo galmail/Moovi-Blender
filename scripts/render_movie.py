@@ -104,7 +104,7 @@ def get_video_name(last_frame):
 def save_video(rendered_video, s3_path):
     bucket = s3_path.split('.')[0].split('/').pop()
     video_path = s3_path.split('amazonaws.com').pop()
-    return_code = subprocess.call("s3cmd put --force " + rendered_video + " s3://" + bucket + video_path, shell=True)
+    return_code = subprocess.call("s3cmd put --acl-public --force " + rendered_video + " s3://" + bucket + video_path, shell=True)
     return return_code==0
 
 def cleanup_video_files(video_path):
