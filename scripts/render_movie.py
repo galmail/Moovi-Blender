@@ -40,11 +40,10 @@ def render_movies(movies,render_path):
     sce.frame_end = strip.frame_final_end
     print('scene __frame_end='+str(sce.frame_end)+'__')
 
+    # render scene
+    render_scene(render_path)
 
     return get_video_name(sce.frame_end)
-
-    # render scene
-    #render_scene(render_path)
 
 def render_scene(render_path):
     render = bpy.data.scenes["Scene"].render
@@ -109,7 +108,8 @@ def save_video(rendered_video, s3_path):
     return return_code==0
 
 def cleanup_video_files(video_path):
-    print("Delete folder: " + video_path)
+    tmp_vid_folder = video_path[:-1]
+    print("Delete folder: " + tmp_vid_folder)
 
 def main():
     import sys       # to get command line args
@@ -155,8 +155,9 @@ def main():
     rendered_video = render_movies(movies, output_folder)
     print("Output folder: " + output_folder)
     print("Rendered Video: " + rendered_video)
-    save_video(output_folder + rendered_video, args.render_path)
-    cleanup_video_files(output_folder)
+    saved_ok = save_video(output_folder + rendered_video, args.render_path)
+    if saved_ok:
+        cleanup_video_files(output_folder)
 
     print("batch job finished, exiting")
 
