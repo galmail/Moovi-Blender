@@ -79,7 +79,7 @@ def retrieve_movies(movies):
         if "amazonaws.com" in movie:
             bucket = movie.split('.')[0].split('/').pop()
             video_path = movie.split('amazonaws.com').pop()
-            local_path = "tmp/" + video_path.split('/').pop()
+            local_path = "tmp/" + video_path#.split('/').pop()
             return_code = subprocess.call("s3cmd get --force s3://" + bucket + video_path + " " + local_path, shell=True)
             if return_code==0:
                 my_movies.append(local_path)
@@ -89,6 +89,8 @@ def retrieve_movies(movies):
             my_movies.append(movie)
     return my_movies
 
+def get_tmp_out_folder(render_path):
+    return "tmp" + render_path.split('amazonaws.com').pop()
 
 def main():
     import sys       # to get command line args
@@ -130,8 +132,8 @@ def main():
 
     # Run load movie function
     movies = retrieve_movies(args.movies)
-    print(movies)
-    #render_movies(movies, args.render_path)
+    output_folder = get_tmp_out_folder(args.render_path)
+    render_movies(movies, output_folder)
 
     print("batch job finished, exiting")
 
