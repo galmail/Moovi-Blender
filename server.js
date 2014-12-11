@@ -42,7 +42,7 @@ app.get('/render', function (req, res) {
     console.log('Video URL: ' + video_url);
 
     var options = {
-      host: 'gruvid.herokuapp.com',
+      host: 'moovi.herokuapp.com',
       port: 80,
       path: '/api/v1/video_is_ready?id='+ video_id + '&url=' + encodeURIComponent(video_url),
       method: 'POST'
